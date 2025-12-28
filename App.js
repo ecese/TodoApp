@@ -6,9 +6,11 @@ import {
   TextInput,
   Button,
   FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import TodoItem from './components/TodoItem';
 
 export default function App() {
@@ -30,18 +32,21 @@ export default function App() {
     ]);
 
     setEnteredTaskText('');
+    Keyboard.dismiss();
   }
 
-  // ✅ DELETE HANDLER
   function deleteTaskHandler(id) {
-    setTasks((currentTasks) => {
-      return currentTasks.filter((task) => task.id !== id);
-    });
+    setTasks((currentTasks) =>
+      currentTasks.filter((task) => task.id !== id)
+    );
   }
 
   return (
     <SafeAreaView style={styles.appContainer}>
-      <View style={styles.contentContainer}>
+      <KeyboardAvoidingView
+        style={styles.contentContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <Text style={styles.title}>My Todo List</Text>
 
         <View style={styles.inputContainer}>
@@ -72,7 +77,7 @@ export default function App() {
             }
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -95,7 +100,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
     borderBottomWidth: 1,
