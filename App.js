@@ -12,10 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import TodoItem from './components/TodoItem';
 
 export default function App() {
-  // State for the text input
   const [enteredTaskText, setEnteredTaskText] = useState('');
-
-  // State for the list of tasks
   const [tasks, setTasks] = useState([]);
 
   function taskInputHandler(enteredText) {
@@ -35,12 +32,18 @@ export default function App() {
     setEnteredTaskText('');
   }
 
+  // ✅ DELETE HANDLER
+  function deleteTaskHandler(id) {
+    setTasks((currentTasks) => {
+      return currentTasks.filter((task) => task.id !== id);
+    });
+  }
+
   return (
     <SafeAreaView style={styles.appContainer}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>My Todo List</Text>
 
-        {/* Input Area */}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.textInput}
@@ -51,12 +54,15 @@ export default function App() {
           <Button title="Add" onPress={addTaskHandler} />
         </View>
 
-        {/* List Area */}
         <View style={styles.listContainer}>
           <FlatList
             data={tasks}
             renderItem={({ item }) => (
-              <TodoItem text={item.text} />
+              <TodoItem
+                text={item.text}
+                id={item.id}
+                onDelete={deleteTaskHandler}
+              />
             )}
             keyExtractor={(item) => item.id}
             ListEmptyComponent={
