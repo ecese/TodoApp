@@ -10,6 +10,7 @@ export default function App() {
   const [enteredTaskText, setEnteredTaskText] = useState('');
   const [tasks, setTasks] = useState([]);
 
+
   // 🔸 Text input değiştikçe çalışacak fonksiyon
   function taskInputHandler(enteredText) {
     setEnteredTaskText(enteredText);
@@ -20,6 +21,12 @@ export default function App() {
     if (enteredTaskText.trim().length === 0) {
       return;
     }
+  function deleteTaskHandler(id) {
+  setTasks((currentTasks) => {
+    return currentTasks.filter((task) => task.id !== id);
+  });
+  }
+  
 
     setTasks((currentTasks) => [
       ...currentTasks,
@@ -47,7 +54,14 @@ export default function App() {
         <View style={styles.listContainer}>
         <FlatList
           data={tasks}
-          renderItem={({ item }) => <TodoItem text={item.text} />}
+          renderItem={({ item }) => (
+            <TodoItem
+              text={item.text}
+              id={item.id}
+              onDelete={deleteTaskHandler}
+            />
+          )}
+
           keyExtractor={(item) => item.id}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No tasks yet. Add one!</Text>
