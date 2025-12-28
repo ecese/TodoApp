@@ -1,32 +1,46 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function App() {
-  const [enteredTaskText, setEnteredTaskText] = useState('');
-  const [tasks, setTasks] = useState([]);
-  function taskInputHandler(enteredText) {
-  setEnteredTaskText(enteredText);
-}
+import TodoItem from './components/TodoItem';
 
-function addTaskHandler() {
-  if (enteredTaskText.trim().length === 0) {
-    return;
+export default function App() {
+  // State for the text input
+  const [enteredTaskText, setEnteredTaskText] = useState('');
+
+  // State for the list of tasks
+  const [tasks, setTasks] = useState([]);
+
+  function taskInputHandler(enteredText) {
+    setEnteredTaskText(enteredText);
   }
 
-  setTasks((currentTasks) => [
-    ...currentTasks,
-    { id: Math.random().toString(), text: enteredTaskText },
-  ]);
+  function addTaskHandler() {
+    if (enteredTaskText.trim().length === 0) {
+      return;
+    }
 
-  setEnteredTaskText('');
-}
+    setTasks((currentTasks) => [
+      ...currentTasks,
+      { id: Math.random().toString(), text: enteredTaskText },
+    ]);
 
+    setEnteredTaskText('');
+  }
 
   return (
     <SafeAreaView style={styles.appContainer}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>My Todo List</Text>
+
+        {/* Input Area */}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.textInput}
@@ -37,8 +51,21 @@ function addTaskHandler() {
           <Button title="Add" onPress={addTaskHandler} />
         </View>
 
-        {/* Input area will go here */}
-        {/* List area will go here */}
+        {/* List Area */}
+        <View style={styles.listContainer}>
+          <FlatList
+            data={tasks}
+            renderItem={({ item }) => (
+              <TodoItem text={item.text} />
+            )}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                No tasks yet. Add one!
+              </Text>
+            }
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -61,23 +88,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   inputContainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 20,
-  borderBottomWidth: 1,
-  borderColor: '#ccc',
-  paddingBottom: 10,
-},
-
-textInput: {
-  flex: 1,
-  borderWidth: 1,
-  borderColor: '#ccc',
-  padding: 10,
-  borderRadius: 6,
-  marginRight: 10,
-  fontSize: 16,
-},
-
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    paddingBottom: 10,
+  },
+  textInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 6,
+    marginRight: 10,
+    fontSize: 16,
+  },
+  listContainer: {
+    flex: 5,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#888',
+  },
 });
